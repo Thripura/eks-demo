@@ -1,0 +1,86 @@
+The Kubernetes Vertical Pod Autoscaler automatically adjusts the CPU and memory reservations for your pods to help "right size" your applications. This adjustment can improve cluster resource utilization and free up CPU and memory for other pods.
+
+Prerequisite: Install the Kubernetes Metrics Server. For more information, see metrics-server.txt
+
+Install Vertical Pod Autoscaler:
+
+1. Open a terminal window and navigate to a directory where you would like to download the Vertical Pod Autoscaler source code.
+
+2. Clone the kubernetes/autoscaler GitHub repository.
+git clone https://github.com/kubernetes/autoscaler.git
+
+3. Change to the vertical-pod-autoscaler directory.
+cd autoscaler/vertical-pod-autoscaler/
+
+4. Deploy the Vertical Pod Autoscaler to your cluster with the following command.
+./hack/vpa-up.sh
+
+5. Verify that the Vertical Pod Autoscaler pods have been created successfully.
+kubectl get pods -n kube-system
+
+Test Vertical Pod Autoscaler installation:
+
+1. Deploy the hamster.yaml Vertical Pod Autoscaler example with the following command.
+kubectl apply -f examples/hamster.yaml
+
+2. Get the pods from the hamster example application.
+kubectl get pods -l app=hamster
+
+3. Describe one of the pods to view its cpu and memory reservation.
+kubectl describe pod hamster-<>
+
+You can see that the original pod reserves 100 millicpu of CPU and 50 mebibytes of memory. For this example application, 100 millicpu is less than the pod needs to run, so it is CPU-constrained. It also reserves much less memory than it needs. The Vertical Pod Autoscaler vpa-recommender deployment analyzes the hamster pods to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values.
+
+4. Wait for the vpa-updater to launch a new hamster pod. This should take a minute or two. You can monitor the pods with the following command.
+kubectl get --watch pods -l app=hamster
+
+5. When a new hamster pod is started, describe it and view the updated CPU and memory reservations.
+kubectl describe pod hamster-<>
+
+6. Describe the hamster-vpa resource to view the new recommendation.
+kubectl describe vpa/hamster-vpa
+
+The example output is as follows.
+
+Name:         hamster-vpa
+Namespace:    default
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"autoscaling.k8s.io/v1beta2","kind":"VerticalPodAutoscaler","metadata":{"annotations":{},"name":"hamster-vpa","namespace":"d...
+API Version:  autoscaling.k8s.io/v1beta2
+Kind:         VerticalPodAutoscaler
+Metadata:
+  Creation Timestamp:  2019-09-27T18:22:51Z
+  Generation:          23
+  Resource Version:    14411
+  Self Link:           /apis/autoscaling.k8s.io/v1beta2/namespaces/default/verticalpodautoscalers/hamster-vpa
+  UID:                 d0d85fb9-e153-11e9-ae53-0205785d75b0
+Spec:
+  Target Ref:
+    API Version:  apps/v1
+    Kind:         Deployment
+    Name:         hamster
+Status:
+  Conditions:
+    Last Transition Time:  2019-09-27T18:23:28Z
+    Status:                True
+    Type:                  RecommendationProvided
+  Recommendation:
+    Container Recommendations:
+      Container Name:  hamster
+      Lower Bound:
+        Cpu:     550m
+        Memory:  262144k
+      Target:
+        Cpu:     587m
+        Memory:  262144k
+      Uncapped Target:
+        Cpu:     587m
+        Memory:  262144k
+      Upper Bound:
+        Cpu:     21147m
+        Memory:  387863636
+Events:          <none>
+
+7. When you finish experimenting with the example application, you can delete it with the following command.
+kubectl delete -f examples/hamster.yaml

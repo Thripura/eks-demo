@@ -1,0 +1,25 @@
+Installation through helm:
+
+1. helm repo add nginx-stable https://helm.nginx.com/stable
+
+2. helm repo update
+
+3. To install the chart with the release name my-release (my-release is the name that you choose)
+helm install my-release nginx-stable/nginx-ingress
+
+Example:
+
+1. Get into nginx-ingress-controller-complete-example folder
+
+2. Execute the below command that creates all the resources in the directory
+kubectl apply -f .
+
+3. Get the Loadbalancer dns of the nginx ingress controller from the below command
+kubectl get svc --all-namespaces
+
+4. Access the tea service with below DNS
+http:<Loadbalancer_dns>/tea
+
+4. Access the coffee service with below DNS
+http:<Loadbalancer_dns>/coffee
+

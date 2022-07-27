@@ -1,0 +1,30 @@
+The Kubernetes Cluster Autoscaler automatically adjusts the number of nodes in your cluster when pods fail or are rescheduled onto other nodes. The Cluster Autoscaler is typically installed as a Deployment in your cluster. It uses leader election to ensure high availability, but scaling is done by only one replica at a time.
+
+Prerequisites:
+
+1. EKS Cluster up and running with atleast one node.
+
+Cluster autoscaler installation:
+
+1. Get into eks-cluster-autoscaler folder
+
+2. Get into terraform.tfvars file and update the below values
+
+# Region and Profile Information
+aws_region = "us-west-2"  # Update this value with AWS Region where your EKS Cluster is created
+aws_profile = "joyoushire" # Update this value with the AWS Profile on your laptop
+
+cluster_name = "eks-demo" # Update this value with the name of the EKS Cluster in which you want to install cluster autoscaler
+cluster_identity_oidc_issuer = "oidc.eks.us-west-2.amazonaws.com/id/0DD941C460C6002A237F9E267AF11AD0" # Update this value with the OIDC issuer
+cluster_identity_oidc_issuer_arn = "arn:aws:iam::464599248654:oidc-provider/oidc.eks.us-west-2.amazonaws.com/id/0DD941C460C6002A237F9E267AF11AD0" # Update this value with the OIDC issuer arn
+
+3. Execute the following commands for the installation
+terraform init
+terraform plan
+terraform apply
+
+4. After the successful installation, scale the existing deployments to see if the new EKS nodes are created.
+
+
+
+
