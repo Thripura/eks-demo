@@ -6,7 +6,7 @@ Prerequisites:
 
 Cluster autoscaler installation:
 
-1. Get into eks-cluster-autoscaler folder
+1. Get into eks-cluster-autoscaler folder in infra folder
 
 2. Get into terraform.tfvars file and update the below values
 
