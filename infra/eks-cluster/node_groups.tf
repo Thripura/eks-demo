@@ -51,6 +51,9 @@ resource "aws_iam_policy" "cni_ipv6_policy" {
 # Defaults follow https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html
 # Plus NTP/HTTPS (otherwise nodes fail to launch)
 ################################################################################
+data "aws_vpc" "selected" {
+  id = var.vpc_id
+}
 
 locals {
   node_sg_name   = coalesce(var.node_security_group_name, "${var.cluster_name}-node")
@@ -90,6 +93,14 @@ locals {
       to_port     = 53
       type        = "ingress"
       self        = true
+    }
+    ingress_nodeport = {
+      description = "Node port ips"
+      protocol    = "tcp"
+      from_port   = 30000
+      to_port     = 32767
+      type        = "ingress"
+      cidr_blocks  = [data.aws_vpc.selected.cidr_block]
     }
     egress_self_coredns_tcp = {
       description = "Node to node CoreDNS"

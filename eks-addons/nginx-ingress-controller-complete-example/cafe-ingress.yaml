@@ -22,4 +22,3 @@ spec:
             name: coffee-svc
             port:
               number: 80
-

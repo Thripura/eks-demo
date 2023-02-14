@@ -1,0 +1,30 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMvakNDQWVhZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJek1ESXhOREV5TkRjeE1Wb1hEVE16TURJeE1URXlORGN4TVZvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTTB6CktKd1NDdW9pUlpvUjNyTnhuK0VPN1Y0a2tObzhvSDR5TUhDcnlERWJaRUxCc2FiWnBsdHpDK2h0ajRnbWFSbTkKQituTkJtUHYyR2RzYzdUWlBTRVRacmMvTHNyWE80SU01NEQyVDdsQ2ZUeXczemk1Y25CNDNlWitzaXNXWkRVSQpXTHdTQWlBeVYvZ2ZNZHBsT3dac25xMHNoc2JrNmVhUjNPR0xyOUI1NjQzVmtRWU9mSE56MCtFWHNXamJ5bG1uCmlydFdpNHJqWDRGM3pFVDF2VExJU1czRm9oTy9LNnZRcFJKWW0xT3FCQ05pTCs5MmhLUy9PNHpFNXRpWnBpWnoKSWsxNjJvLzVRZFRMK3gvaXBDV0VlN2VxMGMxYUE4U3pjWmtsM3Q5QmlhZHcxYUVxL2R3ekNLV2xxN09FbWp5ZgorcnBXdDFDbG9XUFdKTitKb2hVQ0F3RUFBYU5aTUZjd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZOV01HdmpIUnBGRHdZQ3JML1diRGljYkM4OUJNQlVHQTFVZEVRUU8KTUF5Q0NtdDFZbVZ5Ym1WMFpYTXdEUVlKS29aSWh2Y05BUUVMQlFBRGdnRUJBQnJKalN5N0NON2JuNkFuQ3dzawpUYlUwd3BYcEVuODFERGZPNTBBV1VyZXBMbUFCMVU2aVdyQWcxTEQzVVI3bkkvWGdLSE0yVjJPRE9LTndMUnQ3CjBvZDE3RlVVVzE1WVpXekVycUk2L0FpNDIxbkI0NndiRHd4SCtKcktmMmt0RDQzTDQveCtBcUFXQm9TMEJ5ZksKSFoydnFxMEMycjMwVXBJQ3pmdkkvTkZjUEZKamczSG9VTWxaL0pJR3FTSXBDSDYxeGM5cUo1L3RvaFdoc2lFTAp0UkdLSzh0L2lFZmFQOEVkVmZEeHlPVHBLOUpqMU5iamZ2a0VsT29DZkNTZ1ZtUllJYjVENUZJNzBkTjdkR3RoCnNVY000bFYvUjgzWktubkt1aEtHQWpKUDBRYXVyTFQvMlFoSm1WS05YdnVEc09EaFlWRXQ2QUY3VlZ6RFpvb1IKem5rPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    server: https://CC3C1C3097FC250CA616B97E57026C5F.gr7.us-west-2.eks.amazonaws.com
+  name: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+contexts:
+- context:
+    cluster: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+    user: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+  name: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+current-context: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+kind: Config
+preferences: {}
+users:
+- name: arn:aws:eks:us-west-2:464599248654:cluster/eks-cluster
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      args:
+      - --region
+      - us-west-2
+      - eks
+      - get-token
+      - --cluster-name
+      - eks-cluster
+      command: aws
+      env:
+      - name: AWS_PROFILE
+        value: joyoushire

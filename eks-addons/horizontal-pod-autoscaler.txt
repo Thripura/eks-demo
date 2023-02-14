@@ -12,11 +12,7 @@ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
 kubectl get hpa
 
 4. Create a load for the web server by running a container.
-kubectl run -i \
-    --tty load-generator \
-    --rm --image=busybox \
-    --restart=Never \
-    -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 
 5. To watch the deployment scale out, periodically run the following command in a separate terminal from the terminal that you ran the previous step in.It may take over a minute for the replica count to increase. As long as actual CPU percentage is higher than the target percentage, then the replica count increases, up to 10. In this case, it's 250%, so the number of REPLICAS continues to increase.
 kubectl get hpa php-apache

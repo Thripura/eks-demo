@@ -1,0 +1,47 @@
+eksctl utils associate-iam-oidc-provider   --cluster eks-cluster --profile joyoushire --approve
+
+aws iam create-policy   --policy-name eks-cluster-asg-policy  --policy-document file://ca.json --profile joyoushire
+
+eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster eks-cluster --attach-policy-arn "arn:aws:iam::464599248654:policy/eks-cluster-asg-policy" --approve --profile joyoushire --override-existing-serviceaccounts
+
+kubectl -n kube-system describe sa cluster-autoscaler --kubeconfig=eks-config.yml
+
+kubectl apply -f https://www.eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster-autoscaler-autodiscover.yaml --kubeconfig=eks-config.yml
+
+kubectl set image deployment cluster-autoscaler -n kube-system   cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1 --kubeconfig=eks-config.yml
+
+#Update the region and node tags arguments in configuration
+spec:
+  containers:
+  - command:
+    - ./cluster-autoscaler
+    - --cloud-provider=aws
+    - --namespace=kube-system
+    - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/dev-eks-cluster -->   here
+    - --logtostderr=true
+    - --stderrthreshold=info
+    - --v=4
+    - --skip-nodes-with-system-pods=false
+    - --balance-similar-node-groups
+    - --skip-nodes-with-local-storage=false
+    env:
+    - name: AWS_REGION
+      value: us-west-2 --> here
+
+kubectl --kubeconfig=eks-config.yml apply -f cluster-autoscaler/nginx.yml
+
+kubectl scale --replicas=20 deployment/nginx-to-scaleout --kubeconfig=eks-config.yml
+
+
+CLEANUP:
+
+1. eksctl delete iamserviceaccount \
+  --name cluster-autoscaler \
+  --namespace kube-system \
+  --cluster eks-cluster \
+  --wait
+
+2. aws iam delete-policy \
+  --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/k8s-asg-policy
+
+
