@@ -1,11 +1,11 @@
 Installation through helm:
 
-1. helm repo add nginx-stable https://helm.nginx.com/stable
+1. /usr/local/bin/helm repo add nginx-stable https://helm.nginx.com/stable
 
-2. helm repo update
+2. /usr/local/bin/helm repo update
 
 3. To install the chart with the release name my-release (my-release is the name that you choose)
-helm install my-release nginx-stable/nginx-ingress
+/usr/local/bin/helm install my-release nginx-stable/nginx-ingress
 
 Example:
 

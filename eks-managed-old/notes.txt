@@ -1,6 +1,6 @@
 Steps:
 
-1. Cloudformation template ecs-cluster.yam provisions the following resources
+1. Cloudformation template eks-cluster.yaml provisions the following resources
     - Entire VPC Setup
     - EKS Cluster
     - EKS Cluster role --> https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
@@ -8,16 +8,18 @@ Steps:
     - EKS Cluster Security group
     - EKS Node Security group
     - EKS Nodegroup
-    - ALB
+    - ALB with dummy loadbalancer
 
-2. Update the below values in eksconfig accordingly
+3. Create an EC2 instance with
+
+2. Update the below values in eksconfig accordingly. Execute eksconfig.sh to get the eks config and aws auth file
 
 ```
-path="/Users/gnanathripura/Desktop/GitHub/"
-cluster_name="test"
+cluster_name=<cluster_name>
+profile_name=<profile_name>
+region=<region>
 ```
-
-3. Execute eksconfig.sh to get the eks config and aws auth file
+ (or)
 
 4. Execute the below command to create a deployment and service(Loadbalancer). You should see two loadbalancers created
 

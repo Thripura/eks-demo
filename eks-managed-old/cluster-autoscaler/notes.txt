@@ -1,0 +1,38 @@
+Get into eks-demo/eks-managed/cluster-autoscaler folder
+
+1. eksctl utils associate-iam-oidc-provider   --cluster eks-cluster --approve
+
+2. aws iam create-policy   --policy-name eks-cluster-asg-policy  --policy-document file://ca.json
+
+3. eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster eks-cluster --attach-policy-arn "arn:aws:iam::464599248654:policy/eks-cluster-asg-policy" --approve  --override-existing-serviceaccounts
+
+4. kubectl -n kube-system describe sa cluster-autoscaler
+
+5. kubectl apply -f https://www.eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster-autoscaler-autodiscover.yaml
+
+6. kubectl set image deployment cluster-autoscaler -n kube-system   cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1
+
+7. #Update the region and node tags arguments in configuration
+spec:
+  containers:
+  - command:
+    - ./cluster-autoscaler
+    - --cloud-provider=aws
+    - --namespace=kube-system
+    - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/dev-eks-cluster -->   here
+    - --logtostderr=true
+    - --stderrthreshold=info
+    - --v=4
+    - --skip-nodes-with-system-pods=false
+    - --balance-similar-node-groups
+    - --skip-nodes-with-local-storage=false
+    env:
+    - name: AWS_REGION
+      value: us-west-2 --> here
+
+8. kubectl apply -f cluster-autoscaler/nginx.yml
+
+9. kubectl scale --replicas=20 deployment/nginx-to-scaleout --kubeconfig=eks-config.yml
+
+
+

@@ -1,0 +1,59 @@
+Steps:
+
+1. Create a new EC2 Keypair
+ (or)
+   Use an existing keypair. But Make sure you have the pem file to connect to EC2 instance that will be created in Step2
+
+2. Create a stack with template eks-cluster-cft.yaml and change the parameters accordingly
+
+Parameters:
+
+```
+SSHKeyPair=<output from step1>
+EnvironmentName=<<Name of environment> --> By default it is eks-cluster
+```
+
+This CFT provisions the following resources
+
+    - Entire VPC Setup
+    - EKS Cluster
+    - EKS Cluster role --> https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
+    - EKS Node role --> https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html
+    - EKS Cluster Security group
+    - EKS Node Security group
+    - EKS Nodegroup
+    - ALB with dummy loadbalancer
+    - A Public EC2 instance with required tools installed
+
+3. Login to the EC2 instance created & Run below command
+```
+aws configure
+```
+--> Fill secret key and access key of your user (If you don't have them, create new access key and secret key)
+
+4. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+5. Change the directory to eks-managed folder
+
+```
+cd eks-demo/eks-managed
+```
+
+6. Execute the below command to create a deployment and service(Loadbalancer). You should see two loadbalancers created
+
+```
+kubectl  apply -f service-loadbalancer/tea.yml
+kubectl  apply -f service-loadbalancer/coffee.yml
+```
+
+7. Execute the below command to create a deployment and service(Nodeport). Create the TG's
+
+```
+kubectl  apply -f service-nodeport/tea.yml
+kubectl  apply -f service-nodeport/coffee.yml
+```
+
+8. Add 30000 to 327267 port range to eks nodes

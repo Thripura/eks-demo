@@ -4,12 +4,12 @@ data:
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::464599248654:role/test-WorkerNodesRole-137XGL39HL70I
+      rolearn: arn:aws:iam::464599248654:role/eks-cluster-WorkerNodesRole-19TMWCYTLGPZQ
       username: system:node:{{EC2PrivateDNSName}}
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2023-02-14T12:52:04Z"
+  creationTimestamp: "2023-02-15T00:49:23Z"
   name: aws-auth
   namespace: kube-system
-  resourceVersion: "1085"
-  uid: e3e475c1-f551-4118-90a9-cc89ea02b989
+  resourceVersion: "2015"
+  uid: 1a5ab8a8-401d-44b6-bd23-de5974f97d30
