@@ -459,7 +459,7 @@ Resources:
           # Kubeconfig file configuration
           aws eks --region ${AWS::Region}  update-kubeconfig --name ${EnvironmentName}
           export KUBECONFIG=~/.kube/config
-          curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname-s)_amd64.tar.gz" | tar xz -C /tmp
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
           sudo mv /tmp/eksctl /usr/bin
           eksctl version
           curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
