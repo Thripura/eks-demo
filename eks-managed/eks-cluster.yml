@@ -326,7 +326,6 @@ Resources:
     Properties:
       ClusterName: !Sub '${EnvironmentName}'
       NodeRole: !GetAtt WorkerNodesRole.Arn
-      InstanceTypes: "t2.micro"
       ScalingConfig:
         MinSize: 1
         DesiredSize: 2
