@@ -328,12 +328,9 @@ Resources:
       NodeRole: !GetAtt WorkerNodesRole.Arn
       InstanceTypes: "t2.micro"
       ScalingConfig:
-        MinSize:
-          Ref: 1
-        DesiredSize:
-          Ref: 1
-        MaxSize:
-          Ref: 5
+        MinSize: 1
+        DesiredSize: 2
+        MaxSize: 5
       Subnets:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2

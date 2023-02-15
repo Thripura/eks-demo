@@ -8,6 +8,7 @@ Steps:
     - EKS Cluster Security group
     - EKS Node Security group
     - EKS Nodegroup
+    - ALB
 
 2. Update the below values in eksconfig accordingly
 
