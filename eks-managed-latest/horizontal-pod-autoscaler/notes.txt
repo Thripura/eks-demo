@@ -1,0 +1,38 @@
+The Horizontal Pod Autoscaler is a standard API resource in Kubernetes that simply requires that a metrics source (such as the Kubernetes metrics server) is installed on your Amazon EKS cluster to work. You do not need to deploy or install the Horizontal Pod Autoscaler on your cluster to begin scaling your applications.
+
+Prerequisite: Install the Kubernetes Metrics Server. For more information, see metrics-server.txt
+
+1. Deploy a simple Apache web server application with the following command.
+```
+kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+```
+
+2. Create a Horizontal Pod Autoscaler resource for the php-apache deployment.
+```
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+```
+
+3. Describe the autoscaler with the following command to view its details.
+```
+kubectl get hpa
+```
+
+4. Create a load for the web server by running a container.
+```
+kubectl run -i --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+```
+
+5. To watch the deployment scale out, periodically run the following command in a separate terminal from the terminal that you ran the previous step in.It may take over a minute for the replica count to increase. As long as actual CPU percentage is higher than the target percentage, then the replica count increases, up to 10. In this case, it's 250%, so the number of REPLICAS continues to increase.
+```
+kubectl get hpa php-apache
+```
+
+6. Stop the load. In the terminal window you're generating the load in, stop the load by holding down the Ctrl+C keys. You can watch the replicas scale back to 1 by running the following command again in the terminal that you're watching the scaling in.
+```
+kubectl get hpa
+```
+
+7. When you are done experimenting with your sample application, delete the php-apache resources.
+```
+kubectl delete deployment.apps/php-apache service/php-apache horizontalpodautoscaler.autoscaling/php-apache
+```

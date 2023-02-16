@@ -84,8 +84,3 @@ Events:          <none>
 
 7. When you finish experimenting with the example application, you can delete it with the following command.
 kubectl delete -f examples/hamster.yaml
-
-
-sudo yum install openssl11
-rm -rf /bin/openssl
-mv /bin/openssl11 /bin/openssl

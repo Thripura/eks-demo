@@ -1,0 +1,56 @@
+Get into eks-demo/eks-managed/cluster-autoscaler folder
+
+1. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+2. Get into cluster-autoscaler folder
+```
+cd eks-demo/eks-managed/cluster-autoscaler
+```
+
+3. Update the Cluster name in the below command and execute it.
+
+```
+eksctl utils associate-iam-oidc-provider   --cluster <cluster_name> --approve
+```
+
+4. Update the Cluster name in the below command and execute it.
+
+```
+aws iam create-policy  --policy-name <cluster_name>-asg-policy  --policy-document file://cluster-autoscaler.json
+```
+Copy the IAM role arn from the Output
+
+
+5. Updated the IAM role arn in the below command
+```
+eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster <cluster_name> --attach-policy-arn <iam_role_arn> --approve  --override-existing-serviceaccounts
+```
+
+4. Get Service accounts
+```
+kubectl -n kube-system describe sa cluster-autoscaler
+```
+
+5. Apply the Cluster autoscaler
+```
+curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+```
+
+6. Update the cluster name and version in the above downloaded file and execute below command
+```
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+```
+kubectl -n kube-system edit deployment.apps/cluster-autoscaler
+kubectl set image deployment cluster-autoscaler -n kube-system   cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1
+
+7. kubectl apply -f cluster-autoscaler/nginx.yml
+
+8. kubectl scale --replicas=50 deployment/nginx-to-scaleout
+
+You should see new nodes created
+
+
+

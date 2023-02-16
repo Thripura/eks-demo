@@ -1,0 +1,29 @@
+1. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+2. Change the directory to eks-managed folder
+
+```
+cd eks-demo/eks-managed/service-nodeport
+```
+
+3. Execute the below command to create a deployment and service(Nodeport). Create the TG's
+
+```
+kubectl  apply -f service-nodeport/tea.yml
+kubectl  apply -f service-nodeport/coffee.yml
+```
+
+4. Create Tea TG
+
+5. Create Coffee TG
+
+6. Add 30000 to 327267 port range to eks nodes
+
+7. When you are done experimenting with your sample application, delete the resources.
+```
+kubectl delete -f service-loadbalancer/cafe.yaml
+kubectl delete -f service-loadbalancer/cafe-ingress.yaml
+```

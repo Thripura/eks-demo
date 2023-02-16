@@ -1,0 +1,57 @@
+Installation of Nginx ingress controller through helm:
+
+1. Add the helm repo
+```
+/usr/local/bin/helm repo add nginx-stable https://helm.nginx.com/stable
+```
+
+
+2. Update the helm repo
+```
+/usr/local/bin/helm repo update
+```
+
+3. To install the chart with the release name my-release (my-release is the name that you choose)
+```
+/usr/local/bin/helm install my-release nginx-stable/nginx-ingress
+```
+
+Testing:
+
+4. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+5. Get into nginx-ingress-controller folder
+```
+cd eks-demo/eks-managed/nginx-ingress-controller
+```
+
+6. Execute the below command that creates all the resources in the directory
+
+```
+kubectl apply -f cafe.yaml
+kubectl apply -f cafe-ingress.yaml
+```
+
+7. Get the Loadbalancer dns of the nginx ingress controller service from the below command
+```
+kubectl get svc --all-namespaces
+```
+
+8. Access the tea service with below DNS
+```
+http:<Loadbalancer_dns>/tea
+```
+
+9. Access the coffee service with below DNS
+```
+http:<Loadbalancer_dns>/coffee
+```
+
+10. When you are done experimenting with your sample application, delete the resources.
+```
+kubectl delete -f cafe.yaml
+kubectl delete -f cafe-ingress.yaml
+```

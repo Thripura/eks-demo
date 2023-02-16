@@ -1,0 +1,32 @@
+1. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+2. Change the directory to eks-managed folder
+
+```
+cd eks-demo/eks-managed/service-loadbalancer
+```
+
+3. Execute the below command to create a deployment and service(Loadbalancer). You should see two loadbalancers created
+
+```
+kubectl  apply -f service-loadbalancer/tea.yml
+kubectl  apply -f service-loadbalancer/coffee.yml
+```
+
+4. Execute the below command to create a deployment and service(Nodeport). Create the TG's
+
+```
+kubectl  apply -f service-nodeport/tea.yml
+kubectl  apply -f service-nodeport/coffee.yml
+```
+
+5. Add 30000 to 327267 port range to eks nodes
+
+6. When you are done experimenting with your sample application, delete the resources.
+```
+kubectl delete -f service-loadbalancer/cafe.yaml
+kubectl delete -f service-loadbalancer/cafe-ingress.yaml
+```
