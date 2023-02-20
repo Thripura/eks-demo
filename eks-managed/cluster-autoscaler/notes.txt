@@ -1,38 +1,74 @@
 Get into eks-demo/eks-managed/cluster-autoscaler folder
 
-1. eksctl utils associate-iam-oidc-provider   --cluster eks-cluster --approve
+1. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
 
-2. aws iam create-policy   --policy-name eks-cluster-asg-policy  --policy-document file://ca.json
+2. Get into cluster-autoscaler folder
+```
+cd eks-demo/eks-managed/cluster-autoscaler
+```
 
-3. eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster eks-cluster --attach-policy-arn "arn:aws:iam::464599248654:policy/eks-cluster-asg-policy" --approve  --override-existing-serviceaccounts
+3. Update the Cluster name in the below command and execute it.
 
-4. kubectl -n kube-system describe sa cluster-autoscaler
+```
+eksctl utils associate-iam-oidc-provider   --cluster <cluster_name> --approve
+```
 
-5. kubectl apply -f https://www.eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster-autoscaler-autodiscover.yaml
+4. Update the Cluster name in the below command and execute it.
 
-6. kubectl set image deployment cluster-autoscaler -n kube-system   cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.23.1
+```
+aws iam create-policy  --policy-name <cluster_name>-asg-policy  --policy-document file://cluster-autoscaler.json
+```
+Copy the IAM role arn from the Output
 
-7. #Update the region and node tags arguments in configuration
-spec:
-  containers:
-  - command:
-    - ./cluster-autoscaler
-    - --cloud-provider=aws
-    - --namespace=kube-system
-    - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/dev-eks-cluster -->   here
-    - --logtostderr=true
-    - --stderrthreshold=info
-    - --v=4
-    - --skip-nodes-with-system-pods=false
-    - --balance-similar-node-groups
-    - --skip-nodes-with-local-storage=false
-    env:
-    - name: AWS_REGION
-      value: us-west-2 --> here
 
-8. kubectl apply -f cluster-autoscaler/nginx.yml
+5. Updated the IAM role arn in the below command
+```
+eksctl create iamserviceaccount --name cluster-autoscaler --namespace kube-system --cluster <cluster_name> --attach-policy-arn <iam_role_arn> --approve  --override-existing-serviceaccounts
+```
 
-9. kubectl scale --replicas=20 deployment/nginx-to-scaleout --kubeconfig=eks-config.yml
+4. Get Service accounts
+```
+kubectl -n kube-system describe sa cluster-autoscaler
+```
 
+5. Apply the Cluster autoscaler
+```
+curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+```
+
+6. Update the cluster name, version to v1.23.1 and below arguments in the above downloaded file and execute below command
+- --skip-nodes-with-system-pods=false
+- --scale-down-unneeded-time=2s
+```
+kubectl apply -f cluster-autoscaler-autodiscover.yaml
+```
+
+7. Deploy a sample app using following command
+```
+kubectl apply -f nginx.yml
+```
+
+8. Scale the deployment to 50 pods
+```
+kubectl scale --replicas=50 deployment/nginx-to-scaleout
+```
+
+9. You should see new nodes created.
+
+10. Scale down the number of pods to 1
+```
+kubectl scale --replicas=1 deployment/nginx-to-scaleout
+```
+
+11. The new nodes created should automatically be gone
+
+CLEANUP:
+
+1. Delete the IAM Service account CFT
+2. Delete the IAM role created in step 4
+3. Delete the EKS Cluster CFT
 
 

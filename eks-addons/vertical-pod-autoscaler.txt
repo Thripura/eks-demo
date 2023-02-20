@@ -20,7 +20,7 @@ kubectl get pods -n kube-system
 
 Test Vertical Pod Autoscaler installation:
 
-1. Deploy the hamster.yaml Vertical Pod Autoscaler example with the following command.
+1. Deploy the hamster.yaml Vertical Pod Autoscaler example with the following commands
 kubectl apply -f examples/hamster.yaml
 
 2. Get the pods from the hamster example application.

@@ -24,3 +24,7 @@
           eksctl version
           curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
           mv /root/bin/kubectl /usr/bin/kubectl
+          # OpenSSL Installation
+          yum install openssl11 -y
+          rm -rf /bin/openssl
+          mv /bin/openssl11 /bin/openssl

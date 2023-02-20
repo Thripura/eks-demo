@@ -1,0 +1,18 @@
+# Install metrics server on EKS Cluster
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.0/components.yaml
+
+# Execute the below command to check if the metrics server has been successfully installed
+kubectl get apiservice v1beta1.metrics.k8s.io -o json
+
+The output should contain the following values
+{
+  "conditions": [
+    {
+      "lastTransitionTime": "2020-11-10T06:39:13Z",
+      "message": "all checks passed",
+      "reason": "Passed",
+      "status": "True",
+      "type": "Available"
+    }
+  ]
+}

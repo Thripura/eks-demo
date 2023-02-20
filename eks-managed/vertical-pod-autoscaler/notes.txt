@@ -7,38 +7,58 @@ Install Vertical Pod Autoscaler:
 1. Open a terminal window and navigate to a directory where you would like to download the Vertical Pod Autoscaler source code.
 
 2. Clone the kubernetes/autoscaler GitHub repository.
+```
 git clone https://github.com/kubernetes/autoscaler.git
+```
 
 3. Change to the vertical-pod-autoscaler directory.
+```
 cd autoscaler/vertical-pod-autoscaler/
+```
 
 4. Deploy the Vertical Pod Autoscaler to your cluster with the following command.
+```
 ./hack/vpa-up.sh
+```
 
 5. Verify that the Vertical Pod Autoscaler pods have been created successfully.
+```
 kubectl get pods -n kube-system
+```
 
 Test Vertical Pod Autoscaler installation:
 
 1. Deploy the hamster.yaml Vertical Pod Autoscaler example with the following command.
+```
 kubectl apply -f examples/hamster.yaml
+```
 
 2. Get the pods from the hamster example application.
+```
 kubectl get pods -l app=hamster
+```
 
 3. Describe one of the pods to view its cpu and memory reservation.
+```
 kubectl describe pod hamster-<>
+```
 
 You can see that the original pod reserves 100 millicpu of CPU and 50 mebibytes of memory. For this example application, 100 millicpu is less than the pod needs to run, so it is CPU-constrained. It also reserves much less memory than it needs. The Vertical Pod Autoscaler vpa-recommender deployment analyzes the hamster pods to see if the CPU and memory requirements are appropriate. If adjustments are needed, the vpa-updater relaunches the pods with updated values.
 
 4. Wait for the vpa-updater to launch a new hamster pod. This should take a minute or two. You can monitor the pods with the following command.
+```
 kubectl get --watch pods -l app=hamster
+```
 
 5. When a new hamster pod is started, describe it and view the updated CPU and memory reservations.
+```
 kubectl describe pod hamster-<>
+```
 
 6. Describe the hamster-vpa resource to view the new recommendation.
+```
 kubectl describe vpa/hamster-vpa
+```
 
 The example output is as follows.
 
@@ -84,3 +104,5 @@ Events:          <none>
 
 7. When you finish experimenting with the example application, you can delete it with the following command.
 kubectl delete -f examples/hamster.yaml
+
+ADD CLEANUP

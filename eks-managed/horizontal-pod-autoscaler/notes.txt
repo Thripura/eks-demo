@@ -29,10 +29,14 @@ kubectl get hpa php-apache
 
 6. Stop the load. In the terminal window you're generating the load in, stop the load by holding down the Ctrl+C keys. You can watch the replicas scale back to 1 by running the following command again in the terminal that you're watching the scaling in.
 ```
-kubectl get hpa
+kubectl get hpa php-apache
 ```
 
 7. When you are done experimenting with your sample application, delete the php-apache resources.
 ```
 kubectl delete deployment.apps/php-apache service/php-apache horizontalpodautoscaler.autoscaling/php-apache
 ```
+
+CLEANUP
+
+1. Delete the EKS Cluster CFT
