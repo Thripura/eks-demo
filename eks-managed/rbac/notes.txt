@@ -1,0 +1,57 @@
+1. Clone the GitHub repo
+```
+git clone https://github.com/Thripura/eks-demo.git
+```
+
+2. Get into cluster-autoscaler folder
+```
+cd eks-demo/eks-managed/rbac
+```
+
+3. Execute the below command to create rbac resources
+```
+kubectl apply -f rbac.yaml
+```
+
+4. Create 2 IAM users with  console permissions: dev-namespace and dev-cluster.
+
+
+5. Get aws-auth file using the following command
+```
+kubectl  get -n kube-system configmap/aws-auth -o  yaml >> aws-auth.yaml
+```
+
+6. Add the following block under map roles block to the file downloaded in step 4. Update the UserArn
+```
+vi aws-auth.yaml
+```
+
+mapUsers: |
+  - userarn: <Dev_namespace_user_Arn>
+    username: dev-namespace
+  - userarn: <Dev_cluster_user_Arn>
+    username: dev-cluster
+
+
+7. Apply the auth file
+```
+kubectl apply -f aws-auth.yaml
+```
+
+8. Do aws configure in your laptop with dev-namespace user credentials
+
+9. Copy the contents of eks config file ~/.kube/config to your local system
+
+10. Execute the below command to access pods in default namespace
+```
+kubectl --kubeconfig=config.yaml get po
+```
+
+11. The below command shoud give unauthorised error for accessing resources from a different namespace other than default
+```
+kubectl --kubeconfig=config.yaml get po -n kube-system
+```
+
+ERROR: Error from server (Forbidden): pods is forbidden: User "dev-namespace" cannot list resource "pods" in API group "" in the namespace "kube-system"
+
+Therefore, you have restricted a user access to only a specific namespace

@@ -1,0 +1,98 @@
+1. Patch coredns to support fargate deployment using following commands
+```
+aws eks create-fargate-profile \
+    --fargate-profile-name coredns \
+    --cluster-name YOUR_CLUSTER_NAME --region us-west-2 \
+    --pod-execution-role-arn arn:aws:iam::YOUR_ACCOUNT_NUMBER:role/AmazonEKSFargatePodExecutionRole \
+    --selectors namespace=kube-system \
+    --subnets subnet-0000000000000001 subnet-0000000000000002 subnet-0000000000000003
+
+kubectl patch deployment coredns \
+    -n kube-system \
+    --type json \
+    -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'
+
+kubectl rollout restart -n kube-system deployment coredns
+```
+
+
+2. Create Service account for loadbalancer creation
+```
+eksctl utils associate-iam-oidc-provider --cluster YOUR_CLUSTER_NAME --approve --region us-west-2
+```
+
+3. Create Policy
+```
+git clone https://github.com/Thripura/eks-demo.git
+cd eks-demo/eks-managed/fargate/
+```
+```
+aws iam create-policy \
+   --policy-name AWSLoadBalancerControllerIAMPolicy \
+   --policy-document file://iam_policy.json
+```
+
+4. Create service account for AWS Load balancer controller
+```
+eksctl create iamserviceaccount \
+  --cluster=YOUR_CLUSTER_NAME \
+  --namespace=kube-system --region=us-west-2 \
+  --name=aws-load-balancer-controller \
+  --attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --approve
+```
+
+5. Verify if the service account is created
+```
+kubectl get serviceaccount aws-load-balancer-controller --namespace kube-system
+```
+
+6. To add AWS Loadbalancer controller to helm repos, run the following command
+```
+helm repo add eks https://aws.github.io/eks-charts
+```
+
+7. To install the TargetGroupBinding custom resource definitions (CRDs), run the following command:
+```
+kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master"
+```
+
+8. To install AWS Loadbalancer controller, run the following command
+```
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+    --set clusterName=YOUR_CLUSTER_NAME \
+    --set serviceAccount.create=false \
+    --set region=us-west-2 \
+    --set vpcId=<VPC_ID> \
+    --set serviceAccount.name=aws-load-balancer-controller \
+    -n kube-system
+```
+
+9. Create fargate profile
+```
+eksctl create fargateprofile --cluster YOUR_CLUSTER_NAME --region us-west-2 --name game-2048 --namespace game-2048
+```
+
+10.  Deploy sample app
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.4/docs/examples/2048/2048_full.yaml
+```
+
+11. Get ALB DNS and below command
+```
+kubectl get ingress/ingress-2048 -n game-2048
+```
+
+cleanup:
+
+1. Delete the deployment of game-2048
+```
+kubectl delete -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.4/docs/examples/2048/2048_full.yaml
+```
+
+2. Delete the fargate profiles
+
+3. Delete the cloudformation stack
+
+4. Delete the keypair and iam policy created --> AWSLoadBalancerControllerIAMPolicy
